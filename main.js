@@ -3,8 +3,12 @@ const fs = require('fs');
 const path = require('path');
 const { error } = require('console');
 
-let recipes;
-let items;
+const mappings = require('./src/mappings');
+
+let recipes = [];
+let items = [];
+let itemsLoaded = false;
+let recipesLoaded = false;
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -17,7 +21,8 @@ function createWindow () {
 
   win.loadURL("file://" + __dirname + "/src/index.html");
 
-  win.webContents.openDevTools()
+  win.webContents.openDevTools();
+  console.log(mappings.recipe);
 }
 
 app.whenReady().then(createWindow);
@@ -36,63 +41,92 @@ app.on('activate', () => {
 
 // TODO: Move into its own IPC Main file?
 ipcMain.on('load-data-start', () => {
-  console.log("starting load");
+  console.log("Starting Load");
+  let itemPath = path.join(__dirname, 'data/Item.csv');
   let recipePath = path.join(__dirname, 'data/Recipe.csv');
 
-  fs.exists(recipePath, (exists) => {
-    
-    if (exists){
-      console.log('file exists');
-      fs.readFile(recipePath, 'utf-8', handleRecipeLoad);
-    }
-    else {
-      ipcMain.send('load-data-finish', undefined);
-    }
-
-  });
-
-  // let data = fs.readFileSync("./data/data.json", 'utf8');
-  // // let obj = JSON.parse(data);
-
-  // document.getElementById("loading").innerText = "Loaded";
-
-  // // document.getElementById("testResult").innerText = obj.test;
-  // // document.getElementById("wasSuccess").innerText = obj.success;
-  // document.getElementById("contents").style = "";
+  fs.readFile(itemPath, 'utf-8', handleItemLoad);
+  fs.readFile(recipePath, 'utf-8', handleRecipeLoad);
 });
 
-// TODO: Move into its own Recipe file
-function handleRecipeLoad(err, data){
+function handleItemLoad(err, data) {
+  console.log("Parsing Items");
+
   if (err) {
     alert(err.message);
   }
   else {
-    
     let lines = data.split('\n');
-    let recipes = [];
 
-    console.log(lines[3]);
-
-    for (let i = 3; i < lines.length - 1; i++){
+    for (let i = 4; i < lines.length - 1; i++){
       let columns = lines[i].split(',');
       if (!columns[0]) continue;
-
-      recipes.push({
+      let temp = {
         "key": columns[0],
-        "number": columns[1],
-        "craftType": cleanString(columns[2]),
-        "recipeLevelTable": cleanString(columns[3]),
-        "itemName": cleanString(columns[4]),
-        "craftedAmount": columns[5],
-        "requiredItems": parseRecipe(columns)
-      });
-    }
+        "name": cleanString(columns[10]),
+        "icon": columns[11],
+        "recipe": null
+      };
 
-    console.log(recipes[1]);
+      if(temp.name) {
+        items.push(temp);
+      }
+    }
+  }
+
+  console.log(`${items.length} items loaded`);
+  loadComplete();
+}
+
+// TODO: Move into its own Recipe file
+function handleRecipeLoad(err, data) {
+  console.log("Parsing Recipes");
+
+  if (err) {
+    alert(err.message);
+  }
+  else {
+    let lines = data.split('\n');
+
+    for (let i = 4; i < lines.length - 1; i++) {
+      let columns = lines[i].split(',');
+      let recipe;
+
+      // If this is a blank line, skip processing it
+      if (!columns[0]) continue;
+
+      // Prase recipe
+      recipe = {
+        "key": columns[mappings.recipe.key],
+        "number": columns[mappings.recipe.number],
+        "craftType": cleanString(columns[mappings.recipe.craftType]),
+        "recipeLevelTable": cleanString(columns[mappings.recipe.recipeLevel]),
+        "itemName": cleanString(columns[mappings.recipe.itemName]),
+        "craftedAmount": columns[mappings.recipe.craftedAmount],
+        "requiredItems": parseRecipe(columns)
+      };
+
+      // Put the recipe on the array
+      recipes.push(recipe);
+    }
+    
+  }
+
+  console.log(`${recipes.length} recipes loaded`);
+  loadComplete();
+  console.log(recipes[6]);
+}
+
+function loadComplete(){ 
+
+  if(itemsLoaded && recipesLoaded){
+    ipcMain.send('load-data-finish', undefined);
   }
 }
 
 function cleanString(input) {
+  if (!input) return undefined;
+
   if (input.charAt(0) === "\""){
     input = input.substring(1);
   }
@@ -104,6 +138,32 @@ function cleanString(input) {
   return input;
 }
 
-function parseRecipe() {
+function parseRecipe(columns) {
+  let output = [];
+
+  for(let i = 0; i < 8; i++){
+    let tempItem = parseRecipeItem(columns, mappings.recipe.items[i]);
+
+    if(tempItem){
+      output.push(tempItem);
+    }
+  }
+
+  return output;
+}
+
+function parseRecipeItem(columns, itemMapping) {
   
+  let output = {
+    item: cleanString(columns[itemMapping.name]),
+    quantity: columns[itemMapping.quantity]
+  };
+
+  if (output.item && output.item !== ""){
+    return output;
+  }
+  else {
+    return undefined;
+  }
+
 }
