@@ -1,7 +1,4 @@
 module.exports = {
-    test: function() {
-        console.log("Test success");
-    },
     recipe: {
         key: 0,
         number: 1,

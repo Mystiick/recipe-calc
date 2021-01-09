@@ -1,9 +1,8 @@
 const {app, BrowserWindow, ipcMain} = require('electron');
 const fs = require('fs');
 const path = require('path');
-const { error } = require('console');
 
-const mappings = require('./src/mappings');
+const mappings = require('./src/data/mappings');
 
 let recipes = [];
 let items = [];
@@ -19,10 +18,9 @@ function createWindow () {
     }
   });
 
-  win.loadURL("file://" + __dirname + "/src/index.html");
+  win.loadURL(`file://${__dirname}/src/index.html`);
 
   win.webContents.openDevTools();
-  console.log(mappings.recipe);
 }
 
 app.whenReady().then(createWindow);
@@ -120,7 +118,7 @@ function handleRecipeLoad(err, data) {
 function loadComplete(){ 
 
   if(itemsLoaded && recipesLoaded){
-    ipcMain.send('load-data-finish', undefined);
+    ipcMain.send('load-data-finish', {recipes: recipes, items: items});
   }
 }
 
