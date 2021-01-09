@@ -7,14 +7,14 @@ module.exports = {
         itemName: 4,
         craftedAmount: 5,
         items: [
-            { name: 6, quantity: 7},
-            { name: 8, quantity: 9},
-            { name: 10, quantity: 11},
-            { name: 12, quantity: 13},
-            { name: 14, quantity: 15},
-            { name: 16, quantity: 17},
-            { name: 18, quantity: 19},
-            { name: 20, quantity: 21}
+            { name: 6, quantity: 7 },
+            { name: 8, quantity: 9 },
+            { name: 10, quantity: 11 },
+            { name: 12, quantity: 13 },
+            { name: 14, quantity: 15 },
+            { name: 16, quantity: 17 },
+            { name: 18, quantity: 19 },
+            { name: 20, quantity: 21 }
         ]
     }
 }
