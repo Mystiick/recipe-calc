@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = {
-    load: function (callback) {
+    load: callback => {
         console.log("Starting Load");
         onLoadCallback = callback;
 
@@ -12,6 +12,11 @@ module.exports = {
 
         fs.readFile(itemPath, 'utf-8', handleItemLoad);
         fs.readFile(recipePath, 'utf-8', handleRecipeLoad);
+    },
+    find: itemName => {
+        console.log(`finding ${itemName}`);
+        let returnVal = items.filter(x => x.name.toLowerCase().includes(itemName.toLowerCase()));
+        return returnVal;        
     }
 }
 
@@ -47,6 +52,7 @@ function handleItemLoad(err, data) {
     }
 
     console.log(`${items.length} items loaded`);
+    itemsLoaded = true;
     loadComplete();
 }
 
@@ -84,6 +90,7 @@ function handleRecipeLoad(err, data) {
     }
 
     console.log(`${recipes.length} recipes loaded`);
+    recipesLoaded = true;
     loadComplete();
     console.log(recipes[6]);
 }
