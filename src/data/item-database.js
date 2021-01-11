@@ -1,6 +1,7 @@
 const mappings = require('./mappings');
 const fs = require('fs');
 const path = require('path');
+const csv = require('./csv-reader');
 
 module.exports = {
     load: callback => {
@@ -16,8 +17,9 @@ module.exports = {
     find: itemName => {
         console.log(`finding ${itemName}`);
         let returnVal = items.filter(x => x.name.toLowerCase().includes(itemName.toLowerCase()));
-        return returnVal;        
-    }
+        return returnVal;
+    },
+    loadTwoElectricBoogaloo: load
 }
 
 let recipes = [];
@@ -26,6 +28,17 @@ let itemsLoaded = false;
 let recipesLoaded = false;
 let onLoadCallback = undefined;
 
+function load(callback) {
+    console.log("Starting Load");
+    onLoadCallback = callback;
+
+    let itemPath = path.join(__dirname, '../../data/Item.csv');
+    let recipePath = path.join(__dirname, '../../data/Recipe.csv');
+
+    fs.readFile(itemPath, 'utf-8', handleItemLoad);
+    fs.readFile(recipePath, 'utf-8', handleRecipeLoad);
+}
+
 function handleItemLoad(err, data) {
     console.log("Parsing Items");
 
@@ -33,14 +46,14 @@ function handleItemLoad(err, data) {
         console.error(err);
     }
     else {
-        let lines = data.split('\n');
+        let lines = csv.parse(data, 4);
 
         for (let i = 4; i < lines.length - 1; i++) {
-            let columns = lines[i].split(',');
+            let columns = lines[i];
             if (!columns[0]) continue;
             let temp = {
                 "key": columns[0],
-                "name": cleanString(columns[10]),
+                "name": columns[10],
                 "icon": columns[11],
                 "recipe": null
             };
@@ -63,10 +76,10 @@ function handleRecipeLoad(err, data) {
         console.error(err);
     }
     else {
-        let lines = data.split('\n');
+        let lines = csv.parse(data, 4);
 
         for (let i = 4; i < lines.length - 1; i++) {
-            let columns = lines[i].split(',');
+            let columns = lines[i];
             let recipe;
 
             // If this is a blank line, skip processing it
@@ -76,9 +89,9 @@ function handleRecipeLoad(err, data) {
             recipe = {
                 "key": columns[mappings.recipe.key],
                 "number": columns[mappings.recipe.number],
-                "craftType": cleanString(columns[mappings.recipe.craftType]),
-                "recipeLevelTable": cleanString(columns[mappings.recipe.recipeLevel]),
-                "itemName": cleanString(columns[mappings.recipe.itemName]),
+                "craftType": columns[mappings.recipe.craftType],
+                "recipeLevelTable": columns[mappings.recipe.recipeLevel],
+                "itemName": columns[mappings.recipe.itemName],
                 "craftedAmount": columns[mappings.recipe.craftedAmount],
                 "requiredItems": parseRecipe(columns)
             };
@@ -112,7 +125,7 @@ function parseRecipe(columns) {
 function parseRecipeItem(columns, itemMapping) {
 
     let output = {
-        item: cleanString(columns[itemMapping.name]),
+        item: columns[itemMapping.name],
         quantity: columns[itemMapping.quantity]
     };
 
@@ -125,22 +138,10 @@ function parseRecipeItem(columns, itemMapping) {
 
 }
 
-function cleanString(input) {
-    if (!input) return undefined;
-
-    if (input.charAt(0) === "\"") {
-        input = input.substring(1);
-    }
-
-    if (input.charAt(input.length - 1) === "\"") {
-        input = input.substring(0, input.length - 1);
-    }
-
-    return input;
-}
-
 function loadComplete() {
     if (itemsLoaded && recipesLoaded) {
-        onLoadCallback({ recipes: recipes, items: items });
+        if (onLoadCallback) {
+            onLoadCallback({ recipes: recipes, items: items });
+        }
     }
 }

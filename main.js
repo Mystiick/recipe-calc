@@ -13,7 +13,7 @@ function createWindow() {
 
     win.loadURL(`file://${__dirname}/src/renderer/item-display.html`);
 
-    win.webContents.openDevTools();
+    //win.webContents.openDevTools();
 }
 
 app.whenReady().then(createWindow);
@@ -32,7 +32,8 @@ app.on('activate', () => {
 
 // TODO: Move into its own IPC Main file?
 ipcMain.on('load-data-start', () => {
-    database.load((results) => { console.log("load finished") });
+    database.loadTwoElectricBoogaloo();
+    //database.load((results) => { console.log("load finished") });
 });
 
 ipcMain.on('search-item', (event, arg) => {
