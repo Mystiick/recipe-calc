@@ -5,18 +5,13 @@
     <title>Final Fantasy XIV - Recipe Calculator</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
     <script src="item-display.js"></script>
-    <style>
-        li:hover {
-            color:#420420;
-            cursor:pointer;
-        }
-    </style>
+    <link href="item-display.css" rel="stylesheet"></link>
 </head>
-<body style="background: #696969;">
+<body>
     <div id="contents">
         <input id="txtItemName" type="text" placeholder="Item Name"/>
-        <button id="btnSearch" type="button" click="tester()">Search</button>
+        <button id="btnSearch" type="button">Search</button>
     </div>
-    <div id="searchResults" style="border:1px solid black"></div>
+    <div id="searchResults"></div>
 </body>
 </html>

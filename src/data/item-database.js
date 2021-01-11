@@ -4,22 +4,16 @@ const path = require('path');
 const csv = require('./csv-reader');
 
 module.exports = {
-    load: callback => {
-        console.log("Starting Load");
-        onLoadCallback = callback;
-
-        let itemPath = path.join(__dirname, '../../data/Item.csv');
-        let recipePath = path.join(__dirname, '../../data/Recipe.csv');
-
-        fs.readFile(itemPath, 'utf-8', handleItemLoad);
-        fs.readFile(recipePath, 'utf-8', handleRecipeLoad);
-    },
+    load: load,
     find: itemName => {
         console.log(`finding ${itemName}`);
         let returnVal = items.filter(x => x.name.toLowerCase().includes(itemName.toLowerCase()));
         return returnVal;
     },
-    loadTwoElectricBoogaloo: load
+    lookupRecipe: itemName => {
+        console.log(`finding recipe for ${itemName}`);
+        return recipes.filter(x => x.itemName === itemName);        
+    }
 }
 
 let recipes = [];
