@@ -15,13 +15,12 @@ window.onload = _ => {
     btnSearch.onclick = (e) => {
         let results = ipcRenderer.sendSync("search-item", txtItemName.value);
 
-        let resultsHtml = `<h3>${results.length} Total Results matching "${txtItemName.value}"</h3><ul>`;
+        let resultsHtml = `<h3>${results.length} Total Results matching "${txtItemName.value}"</h3>`;
 
 
         results.forEach(r => {
-            resultsHtml += `<li>${buildItemPreview(r)}</li>`;
+            resultsHtml += `<div>${buildItemPreview(r)}</div>`;
         });
-        resultsHtml += "</ul>"
 
         searchResults.innerHTML = resultsHtml;
     };
