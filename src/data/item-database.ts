@@ -1,11 +1,12 @@
-import { Mappings } from './mappings';
 import fs from 'fs';
 import path from 'path';
+import { Mappings } from './mappings';
 import { CsvReader } from './csv-reader';
+import { Item } from '../models/';
 
 export class ItemDatabase {
     private recipes: Array<any> = [];
-    private items: Array<any> = [];
+    private items: Array<Item> = [];
     private itemsLoaded: boolean = false;
     private recipesLoaded: boolean = false;
     private onLoadCallback: Function | undefined;
@@ -21,14 +22,15 @@ export class ItemDatabase {
 
         let itemPath = path.join(__dirname, '../../data/Item.csv');
         let recipePath = path.join(__dirname, '../../data/Recipe.csv');
-        let that: ItemDatabase = this;
-        fs.readFile(itemPath, 'utf-8', (a,b) => {this.handleItemLoad(a,b, that); });
-        fs.readFile(recipePath, 'utf-8', (a,b) => {this.handleRecipeLoad(a,b,that); });
+        
+        fs.readFile(itemPath, 'utf-8', (a,b) => {this.handleItemLoad(a,b, this); });
+        fs.readFile(recipePath, 'utf-8', (a,b) => {this.handleRecipeLoad(a,b, this); });
     }
 
-    public find(itemName: string): any {
+    public find(itemName: string): Item[] {
         console.log(`finding ${itemName}`);
-        let returnVal = this.items.filter(x => x.name.toLowerCase().includes(itemName.toLowerCase()));
+        let returnVal: Item[] = this.items.filter(x => x.Name.toLowerCase().includes(itemName.toLowerCase()));
+
         return returnVal;
     }
 
@@ -47,16 +49,16 @@ export class ItemDatabase {
             let lines = that.csv.parse(data, 4);
 
             for (let i = 4; i < lines.length - 1; i++) {
-                let columns = lines[i];
-                if (!columns[0]) continue;
-                let temp = {
-                    "key": columns[0],
-                    "name": columns[10],
-                    "icon": columns[11],
-                    "recipe": null
-                };
+                let columns: string[] = lines[i];
 
-                if (temp.name) {
+                if (!columns[0]) continue;
+                let temp = new Item({
+                    "Key": +columns[0],
+                    "Name": columns[10],
+                    "Icon": columns[11]
+                });
+
+                if (temp.Name) {
                     this.items.push(temp);
                 }
             }

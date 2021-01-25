@@ -1,5 +1,6 @@
-const fs = require('fs');
-const { ipcRenderer } = require('electron');
+import { Item } from "../models";
+import fs from 'fs';
+import { ipcRenderer } from 'electron';
 
 let txtItemName, btnSearch, searchResults;
 let itemResult;
@@ -17,7 +18,6 @@ window.onload = _ => {
 
         let resultsHtml = `<h3>${results.length} Total Results matching "${txtItemName.value}"</h3>`;
 
-
         results.forEach(r => {
             resultsHtml += `<div>${buildItemPreview(r)}</div>`;
         });
@@ -32,12 +32,12 @@ function init() {
     searchResults = document.getElementById("searchResults");
 }
 
-function buildItemPreview(item) {
+function buildItemPreview(item: Item) {
     return `
-    <div class="item-preview" id="item-${item.key}" onclick="doThing('${escape(item.name)}')">
-        <div>${item.name}</div>
-        <div>${item.key}</div>
-        <div>${item.icon}</div>
+    <div class="item-preview" id="item-${item.Key}" onclick="doThing('${escape(item.Name)}')">
+        <div>${item.Name}</div>
+        <div>${item.Key}</div>
+        <div>${item.Icon}</div>
     </div>`
 }
 
