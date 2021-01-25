@@ -41,7 +41,7 @@ export class ItemDatabase {
 
     private handleItemLoad(err, data, that: ItemDatabase) {
         console.log("Parsing Items");
-
+        this.items = [];
         if (err) {
             console.error(err);
         }
@@ -53,9 +53,9 @@ export class ItemDatabase {
 
                 if (!columns[0]) continue;
                 let temp = new Item({
-                    "Key": +columns[0],
-                    "Name": columns[10],
-                    "Icon": columns[11]
+                    Key: +columns[0],
+                    Name: columns[10],
+                    Icon: columns[11]
                 });
 
                 if (temp.Name) {
@@ -71,6 +71,8 @@ export class ItemDatabase {
 
     private handleRecipeLoad(err, data, obj: ItemDatabase) {
         console.log("Parsing Recipes");
+
+        this.recipes = [];
 
         if (err) {
             console.error(err);

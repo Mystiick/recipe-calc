@@ -1,49 +1,49 @@
 import { Item } from "../models";
-import fs from 'fs';
 import { ipcRenderer } from 'electron';
 
-let txtItemName, btnSearch, searchResults;
-let itemResult;
+let $txtItemName: JQuery<HTMLElement>;
+let $btnSearch: JQuery<HTMLElement>;
+let $searchResults: JQuery<HTMLElement>;
 
 document.addEventListener('DOMContentLoaded', _ => {
     ipcRenderer.send('load-data-start');
     ipcRenderer.on('receive-recipe', reciveRecipe);
 });
 
-window.onload = _ => {
+window.onload = () => {
     init();
 
-    btnSearch.onclick = (e) => {
-        let results = ipcRenderer.sendSync("search-item", txtItemName.value);
+    $btnSearch.on('click', _ => {
+        console.log("asdfasdfasdf" + $txtItemName.val());
+        let results = ipcRenderer.sendSync("search-item", $txtItemName.val());
 
-        let resultsHtml = `<h3>${results.length} Total Results matching "${txtItemName.value}"</h3>`;
+        let $resultsHtml: JQuery<HTMLElement> = $(`<h3>${results.length} Total Results matching "${$txtItemName.val()}"</h3>`);
 
-        results.forEach(r => {
-            resultsHtml += `<div>${buildItemPreview(r)}</div>`;
+        results.forEach((r: Item) => {
+            $resultsHtml.append(buildItemPreview(r));
         });
 
-        searchResults.innerHTML = resultsHtml;
-    };
+        $searchResults.html("").append($resultsHtml);
+    });
 };
 
 function init() {
-    txtItemName = document.getElementById("txtItemName");
-    btnSearch = document.getElementById("btnSearch");
-    searchResults = document.getElementById("searchResults");
+    $btnSearch = $("#btnSearch");
+    $searchResults = $("#searchResults");
+    $txtItemName = $("#txtItemName");
 }
 
 function buildItemPreview(item: Item) {
-    return `
-    <div class="item-preview" id="item-${item.Key}" onclick="doThing('${escape(item.Name)}')">
-        <div>${item.Name}</div>
-        <div>${item.Key}</div>
-        <div>${item.Icon}</div>
-    </div>`
+    return $(`<div class="item-preview" id="item-${item.Key}">
+                <div>${item.Name}</div>
+                <div>${item.Key}</div>
+                <div>${item.Icon}</div>
+            </div>`)
+        .on("click", _ => { lookupRecipe(item.Name); } );
 }
 
 // Referenced in item-preview
-function doThing(itemName) {
-    itemName = unescape(itemName);
+function lookupRecipe(itemName: string) {
     ipcRenderer.send('get-recipe', itemName);
 }
 
