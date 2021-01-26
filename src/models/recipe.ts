@@ -1,7 +1,12 @@
 export class Recipe {
-    public key: number;
-    public number: number;
-    public craftType: string;
-    public recipeLevelTable: string;
-    //public 
+    public Number: number;
+    public CraftType: string;
+    public RecipeLevelTable: string;
+    public ItemResult: ItemAndAmount;
+    public ItemIngredient: ItemAndAmount[];
+}
+
+export class ItemAndAmount {
+    item: string;
+    amount: number;
 }

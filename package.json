@@ -6,12 +6,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run build && electron ./dist/main.js",
+    "start-fast": "electron ./dist/main.js",
     "build": "tsc && npm run copy",
     "watch": "tsc -w",
     "copy": "npm run copy-html && npm run copy-css && npm run copy-data",
     "copy-html": "xcopy \".\\src\\*.html\" \".\\dist\\src\\\" /s /y",
     "copy-css": "xcopy \".\\src\\*.css\" \".\\dist\\src\\\" /s /y",
     "copy-data": "xcopy \".\\data\\*\" \".\\dist\\data\\\" /s /y"
+  },
+  "_moduleAliases": {
+    "@models": "dist/src/models/",
+    "@services": "dist/src/services/",
+    "also-update": "tsconfig.json"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +26,7 @@
     "bootstrap": "^4.5.3",
     "electron": "^11.1.0",
     "jquery": "^3.5.1",
+    "module-alias": "^2.2.2",
     "popper.js": "^1.16.1"
   },
   "devDependencies": {

@@ -14,10 +14,9 @@ window.onload = () => {
     init();
 
     $btnSearch.on('click', _ => {
-        console.log("asdfasdfasdf" + $txtItemName.val());
         let results = ipcRenderer.sendSync("search-item", $txtItemName.val());
 
-        let $resultsHtml: JQuery<HTMLElement> = $(`<h3>${results.length} Total Results matching "${$txtItemName.val()}"</h3>`);
+        let $resultsHtml: JQuery<HTMLElement> = $(`<div><h3>${results.length} Total Results matching "${$txtItemName.val()}"</h3></div>`);
 
         results.forEach((r: Item) => {
             $resultsHtml.append(buildItemPreview(r));
