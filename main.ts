@@ -1,6 +1,8 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
-const database = require('./src/data/item-database.js');
+import { ItemDatabase } from './src/data/item-database';
+
+let database: ItemDatabase = new ItemDatabase();
 
 function createWindow() {
     const win = new BrowserWindow({

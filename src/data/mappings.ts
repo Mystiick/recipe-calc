@@ -1,5 +1,10 @@
-module.exports = {
-    recipe: {
+export class Mappings {
+
+    constructor() {
+
+    }
+
+    public static recipe = {
         key: 0,
         number: 1,
         craftType: 2,
@@ -16,5 +21,6 @@ module.exports = {
             { name: 18, quantity: 19 },
             { name: 20, quantity: 21 }
         ]
-    }
+    };
+
 }

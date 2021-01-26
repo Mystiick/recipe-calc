@@ -4,14 +4,24 @@
     <meta charset="UTF-8">
     <title>Final Fantasy XIV - Recipe Calculator</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <script src="item-display.js"></script>
+    
+    <script>
+        require('./item-display');
+
+        let $ = require('jquery');
+        require('popper.js');
+        require('bootstrap');
+    </script>
+
     <link href="item-display.css" rel="stylesheet"></link>
+    <link rel="stylesheet" href="../lib/bootstrap/bootstrap.min.css" />
 </head>
 <body>
-    <div id="contents">
+    <div id="contents" class="container-fluid">
         <input id="txtItemName" type="text" placeholder="Item Name"/>
         <button id="btnSearch" type="button">Search</button>
+    
+        <div id="searchResults"></div>
     </div>
-    <div id="searchResults"></div>
 </body>
 </html>
