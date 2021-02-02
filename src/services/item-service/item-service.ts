@@ -16,16 +16,23 @@ export class ItemService {
         this.recipes = output.recipes;
     }
 
-    public find(itemName: string): Item[] {
+    public find(itemName: string, includeAll: boolean): Item[] {
         console.log(`finding ${itemName}`);
 
         let returnVal: Item[] = this.items.filter(x => x.Name.toLowerCase().includes(itemName.toLowerCase()));
+
+        returnVal.forEach(x => {
+            x.Recipe = this.lookupRecipe(x.Name);
+        });
+
+        if (!includeAll) {
+            returnVal = returnVal.filter(x => x.Recipe && x.Recipe.length > 0);
+        }
+        
         return returnVal;
     }
 
     public lookupRecipe(itemName: string) {
-        console.log(`finding recipe for ${itemName}`);
-
         return this.recipes.filter(x => x.ItemResult.item === itemName);
     }
 

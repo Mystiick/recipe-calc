@@ -1,0 +1,16 @@
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+$primary: #696969;
+
+body {
+    background-color: $primary;
+    color: $light;
+}
+
+.card {
+    background-color: $primary;
+}
+
+.text-muted {
+    color: #999999 !important
+}
