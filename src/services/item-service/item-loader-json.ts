@@ -18,8 +18,6 @@ export class ItemLoaderJson implements IItemLoader {
         let items: Item[] = JSON.parse(fs.readFileSync(itemPath, 'utf-8'));
         let recipes: Recipe[] = JSON.parse(fs.readFileSync(recipePath, 'utf-8'));
 
-        console.log(items[6]);
-
         return {items: items, recipes: recipes};
     }
 
