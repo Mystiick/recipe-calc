@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Final Fantasy XIV - Recipe Calculator</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    
+    <script>
+        require('./recipe-display');
+
+        let $ = require('jquery');
+        require('popper.js');
+        require('bootstrap');
+    </script>
+
+    <!-- <link href="item-display.css" rel="stylesheet"></link> -->
+    <link rel="stylesheet" href="../../css/bootstrap-custom.css" />
+</head>
+<body>
+    <div id="contents" class="m-3">
+        <h1 id="item-name">Item Name</h1>
+        <h4 id="item-desc">Description goes here</h4>
+        
+        <div id="recipes"></div>
+    </div>
+</body>
+</html>

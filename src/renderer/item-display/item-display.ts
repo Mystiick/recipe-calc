@@ -1,5 +1,7 @@
+require('module-alias/register'); // Must be the first line of code before any imports. This wires up all the aliases
 import { Item, Recipe } from "@models/";
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, remote } from 'electron';
+import { IpcConstants } from "@services/";
 
 let $txtItemName: JQuery<HTMLElement>;
 let $btnSearch: JQuery<HTMLElement>;
@@ -8,26 +10,26 @@ let $spinner: JQuery<HTMLElement>;
 
 document.addEventListener('DOMContentLoaded', _ => {
     ipcRenderer.send('load-data-start');
-    ipcRenderer.on('receive-recipe', reciveRecipe);
-    ipcRenderer.on('receive-item', receiveItem)
+    ipcRenderer.on('receive-item', receiveItem);
 });
 
 window.onload = () => {
     init();
 
     $btnSearch.on('click', _ => {
-        ipcRenderer.send('search-item', $txtItemName.val());
-        $searchResults.html("");
+        ipcRenderer.send(IpcConstants.SearchItem, $txtItemName.val());
+
+        $searchResults.html('');
         $btnSearch.attr('disabled', '');
         $spinner.show();
     });
 };
 
 function init() {
-    $btnSearch = $("#btnSearch");
-    $searchResults = $("#searchResults");
-    $txtItemName = $("#txtItemName");
-    $spinner = $("#spinner");
+    $btnSearch = $('#btnSearch');
+    $searchResults = $('#searchResults');
+    $txtItemName = $('#txtItemName');
+    $spinner = $('#spinner');
 }
 
 function buildItemPreview(item: Item) {
@@ -46,14 +48,14 @@ function buildItemPreview(item: Item) {
     return $output;
 }
 
-function receiveItem(sennder: any, results: Item[]) {
+function receiveItem(sender: any, results: Item[]) {
     let $resultsHtml: JQuery<HTMLElement> = $(`<div><h3>${results.length} total ${results.length > 1 ? 'results' : 'result'} matching "${$txtItemName.val()}"</h3></div>`);
 
     results.forEach((r: Item) => {
         $resultsHtml.append(buildItemPreview(r));
     });
 
-    $searchResults.html("").append($resultsHtml);
+    $searchResults.html('').append($resultsHtml);
 
     $spinner.hide();
     $btnSearch.attr('disabled', null);
@@ -61,16 +63,9 @@ function receiveItem(sennder: any, results: Item[]) {
 
 function displayRecipe($item: JQuery<HTMLElement>) {
     let item: Item = $item.data('item');
-    console.log('recipe', item.Recipe);    
-}
+    console.log('recipe', item.Recipe);
 
-// Referenced in item-preview
-function lookupRecipe(itemName: string, $this: JQuery<HTMLElement>) {
-    ipcRenderer.send('get-recipe', itemName);
-}
+    ipcRenderer.send(IpcConstants.SetLookupItem, item);
 
-function reciveRecipe(_sender: any, arg: Recipe){
-    console.log("arg", arg);
-
-    // TODO: Display arg somehow on the UI
+    window.open(`../recipe-display/recipe-display.html`);
 }
