@@ -3,7 +3,6 @@ export class CsvReader {
     }
 
     public parse(rawText: string, bufferSkip: number) {
-        console.log('Parsing file');
         let startTime = new Date();
     
         let lines = rawText.split('\n');
@@ -39,7 +38,7 @@ export class CsvReader {
             records.push(columns);
         }
     
-        //console.log(`Done parsing file. Parsing took ${new Date() - startTime}ms`);
+        console.log(`Done parsing file. Parsing took ${<any>new Date() - <any>startTime}ms`);
         return records;
     }
 

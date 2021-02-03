@@ -1,8 +1,13 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
-import { ItemDatabase } from './src/data/item-database';
+require('module-alias/register'); // Must be the first line of code before any imports. This wires up all the aliases
+import { app, BrowserWindow, ipcMain } from 'electron';
+import { SettingsService, ItemService } from '@services/';
+import { IItemLoader, ItemLoaderCsv, ItemLoaderJson } from '@services/item-service/';
 
-let database: ItemDatabase = new ItemDatabase();
+
+let settings: SettingsService;
+let database: ItemService;
+let itemLoader: IItemLoader;
+bootstrap();
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -34,17 +39,24 @@ app.on('activate', () => {
 
 // TODO: Move into its own IPC Main file?
 ipcMain.on('load-data-start', () => {
-    database.load((results) => { console.log("load finished") });
+    database.load();
 });
 // TODO: Move into its own IPC Main file?
 ipcMain.on('search-item', (event, arg) => {
-    event.returnValue = database.find(arg);
+    // TODO: Add some way to pass in true/false from a checkbox to include all items without recipes
+    event.reply('receive-item', database.find(arg, false));
 });
 // TODO: Move into its own IPC Main file?
 ipcMain.on('get-recipe', (event, arg) => {
     console.log(`getting recipe for ${arg}`);
-    console.log(arg);
 
     let returnVal = database.lookupRecipe(arg);
     event.reply('receive-recipe', returnVal);
 });
+
+function bootstrap() {
+    console.log("bootstrapping");
+    settings = new SettingsService();
+    itemLoader = new ItemLoaderJson();
+    database = new ItemService(itemLoader);
+}

@@ -1,0 +1,8 @@
+/* Begin Overriding Bootstrap styles */
+$body-bg: #696969;
+$body-color: #f8f9fa;
+$card-bg: $body-bg;
+$text-muted: #999999;
+/* End Overriding Bootstrap styles */
+
+@import "../../node_modules/bootstrap/scss/bootstrap";

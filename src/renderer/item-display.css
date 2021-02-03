@@ -1,15 +1,8 @@
-body {
-    background: #696969 !important;
-    color:#fafafa !important;
-    font-family: sans-serif;
-}
-
 .item-preview {
-    border: .1em solid #420420;
-    padding: .1em;
     margin: .25em 0
 }
 .item-preview:hover {
     cursor:pointer;
     background-color: #4204206b;
 }
+

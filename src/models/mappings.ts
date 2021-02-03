@@ -1,9 +1,4 @@
 export class Mappings {
-
-    constructor() {
-
-    }
-
     public static recipe = {
         key: 0,
         number: 1,
@@ -22,5 +17,4 @@ export class Mappings {
             { name: 20, quantity: 21 }
         ]
     };
-
 }
