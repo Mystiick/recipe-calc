@@ -31,14 +31,16 @@ export class RecipeDisplay {
     private buildRecipes(item: Item): string {
         let output: string = '';
         
-        item.Recipe?.forEach(r => {
-
-            let rec: string = r.CraftType;
+        item.Recipe?.sort((a,b)=> { 
+            return a.CraftType < b.CraftType ? -1 : 1
+        }).forEach(r => {
+            let rec: string = `<button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#${r.CraftType.toLowerCase()}" aria-expanded="false" aria-controls="${r.CraftType.toLowerCase()}">${r.CraftType}</button>
+            <div id="${r.CraftType.toLowerCase()}" class="collapse">`;
             r.ItemIngredient.forEach(i => {
                 rec += `<div>${i.amount}x ${i.item}</div>`
             });
 
-            output += `<div style="border:1px solid black" class="m-2 p-2">${rec}</div>`
+            output += `</div><div class="card m-1 p-1">${rec}</div>`
         });
 
         return output;
