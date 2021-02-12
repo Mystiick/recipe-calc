@@ -16,6 +16,13 @@ document.addEventListener('DOMContentLoaded', _ => {
 window.onload = () => {
     init();
 
+    $txtItemName.on('keyup', event => {
+        if (event.key === 'Enter') {
+            console.log(event);
+            $btnSearch.trigger('click');
+        }
+    });
+
     $btnSearch.on('click', _ => {
         ipcRenderer.send(IpcConstants.SearchItem, $txtItemName.val());
 

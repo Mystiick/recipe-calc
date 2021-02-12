@@ -23,6 +23,9 @@ export class RecipeDisplay {
     }
 
     private updateItemDisplay(item: Item) {
+
+        this.mapRecipes(item.Recipe);
+
         this.$itemName.html(item.Name);
         this.$itemDesc.html(item.Description);
         this.$recipes.html(this.buildRecipes(item));
@@ -31,7 +34,7 @@ export class RecipeDisplay {
     private buildRecipes(item: Item): string {
         let output: string = '';
         
-        item.Recipe?.sort((a,b)=> { 
+        item.Recipe.sort((a,b)=> { 
             return a.CraftType < b.CraftType ? -1 : 1
         }).forEach(r => {
             let rec: string = `<button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#${r.CraftType.toLowerCase()}" aria-expanded="false" aria-controls="${r.CraftType.toLowerCase()}">${r.CraftType}</button>
@@ -44,6 +47,25 @@ export class RecipeDisplay {
         });
 
         return output;
+    }
+
+    /**
+     * Recursive function that traverses the 
+     */
+    private mapRecipes(recipes: Recipe[]) {
+        recipes.forEach(recipe => {
+            recipe.ItemIngredient.forEach(ingredient => {
+                ingredient.Recipe = this.lookupRecipe(ingredient.item);
+
+                if (ingredient.Recipe) {
+                    this.mapRecipes(ingredient.Recipe);
+                }
+            });
+        });
+    }
+
+    private lookupRecipe(name: string): Recipe[] {
+        return ipcRenderer.sendSync(IpcConstants.GetRecipesSync, name);
     }
 }
 

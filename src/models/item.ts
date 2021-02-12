@@ -5,7 +5,7 @@ export class Item {
     public Name: string;
     public Description: string;
     public Icon: string;
-    public Recipe: Recipe[] | undefined;
+    public Recipe: Recipe[];
     public ItemUICategory: string;
     public LevelItem: number; // ilvl
     public LevelEquip: number; // class level requirement

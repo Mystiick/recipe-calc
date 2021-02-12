@@ -47,6 +47,10 @@ ipcMain.on(IpcConstants.SearchItem, (event, arg) => {
     // TODO: Add some way to pass in true/false from a checkbox to include all items without recipes
     event.reply('receive-item', database.find(arg, false));
 });
+// TODO: Move into its own IPC Main file?
+ipcMain.on(IpcConstants.GetRecipesSync, (event: any, arg: string) => {
+    event.returnValue = database.lookupRecipe(arg);
+});
 
 
 ipcMain.on(IpcConstants.SetLookupItem, (event: any, arg: Item) => {
