@@ -9,4 +9,5 @@ export class Recipe {
 export class ItemAndAmount {
     item: string;
     amount: number;
+    Recipe: Recipe[];
 }

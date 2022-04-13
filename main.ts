@@ -1,13 +1,14 @@
 require('module-alias/register'); // Must be the first line of code before any imports. This wires up all the aliases
 import { app, BrowserWindow, ipcMain } from 'electron';
-import { SettingsService, ItemService } from '@services/';
-import { IItemLoader, ItemLoaderCsv, ItemLoaderJson } from '@services/item-service/';
-
+import { SettingsService, ItemService, IItemLoader, ItemLoaderJson, IpcConstants } from '@services/';
+import { Item } from '@models/*';
 
 let settings: SettingsService;
 let database: ItemService;
 let itemLoader: IItemLoader;
 bootstrap();
+
+let itemToDisplay: Item;
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -18,7 +19,7 @@ function createWindow() {
         }
     });
 
-    win.loadURL(`file://${__dirname}/src/renderer/item-display.html`);
+    win.loadURL(`file://${__dirname}/src/renderer/item-display/item-display.html`);
 
     win.webContents.openDevTools();
 }
@@ -38,20 +39,25 @@ app.on('activate', () => {
 });
 
 // TODO: Move into its own IPC Main file?
-ipcMain.on('load-data-start', () => {
+ipcMain.on(IpcConstants.LoadDataStart, () => {
     database.load();
 });
 // TODO: Move into its own IPC Main file?
-ipcMain.on('search-item', (event, arg) => {
+ipcMain.on(IpcConstants.SearchItem, (event, arg) => {
     // TODO: Add some way to pass in true/false from a checkbox to include all items without recipes
     event.reply('receive-item', database.find(arg, false));
 });
 // TODO: Move into its own IPC Main file?
-ipcMain.on('get-recipe', (event, arg) => {
-    console.log(`getting recipe for ${arg}`);
+ipcMain.on(IpcConstants.GetRecipesSync, (event: any, arg: string) => {
+    event.returnValue = database.lookupRecipe(arg);
+});
 
-    let returnVal = database.lookupRecipe(arg);
-    event.reply('receive-recipe', returnVal);
+
+ipcMain.on(IpcConstants.SetLookupItem, (event: any, arg: Item) => {
+    itemToDisplay = arg;
+});
+ipcMain.on(IpcConstants.GetLookupItemSync, (event: any, arg: any) => {
+    event.returnValue = itemToDisplay;
 });
 
 function bootstrap() {
